@@ -1,22 +1,22 @@
 :root {
-  /* Money-green preview (build v8) */
-  --bg: #1B8A4A;
-  --bg-deep: #147A3F;
+  --bg: #F2F2F7;
+  --bg-deep: #F2F2F7;
   --card: #FFFFFF;
-  --text: #0B2E1A;
-  --muted: rgba(11, 46, 26, 0.62);
-  --blue: #0F6E3A; /* primary actions use money green */
-  --blue-press: #0A5A2F;
-  --green: #34C759;
+  --text: #1C1C1E;
+  --muted: #8E8E93;
+  --blue: #0A84FF;
+  --blue-press: #0071E3;
+  --green: #1B8A4A;
+  --green-deep: #0F6E3A;
   --amber: #FF9F0A;
   --red: #FF3B30;
   --gray-pill: #8E8E93;
-  --sep: rgba(11, 46, 26, 0.14);
-  --shadow: 0 2px 8px rgba(0,0,0,0.12), 0 8px 24px rgba(0,0,0,0.08);
+  --sep: rgba(60, 60, 67, 0.12);
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
   --radius: 16px;
   --safe-b: env(safe-area-inset-bottom, 0px);
   --safe-t: env(safe-area-inset-top, 0px);
-  --money-mark: rgba(255, 255, 255, 0.14);
+  --money-mark: rgba(27, 138, 74, 0.12);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
@@ -24,8 +24,7 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: linear-gradient(165deg, #22A055 0%, var(--bg) 42%, var(--bg-deep) 100%);
-  background-attachment: fixed;
+  background: var(--bg);
   color: var(--text);
   -webkit-tap-highlight-color: transparent;
   -webkit-text-size-adjust: 100%;
@@ -47,46 +46,107 @@ button, input, select { font: inherit; }
   overflow-x: hidden;
 }
 
-/* Big dollar watermark — money theme */
+/* Dollar mark — size/placement depends on theme */
 .money-mark {
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  color: var(--money-mark);
+}
+#app > *:not(.money-mark) { position: relative; z-index: 1; }
+.money-mark { display: none; }
+
+/* 1) Full mint screen + big soft $ behind list */
+html.theme-mint, html.theme-mint body {
+  background: linear-gradient(165deg, #22A055 0%, #1B8A4A 42%, #147A3F 100%);
+  background-attachment: fixed;
+  --bg: #1B8A4A;
+  --text: #0B2E1A;
+  --muted: rgba(11, 46, 26, 0.62);
+  --blue: #0F6E3A;
+  --blue-press: #0A5A2F;
+  --sep: rgba(11, 46, 26, 0.14);
+  --shadow: 0 2px 8px rgba(0,0,0,0.12), 0 8px 24px rgba(0,0,0,0.08);
+  --money-mark: rgba(255, 255, 255, 0.14);
+}
+html.theme-mint .money-mark {
+  display: block;
   position: fixed;
   left: 50%;
   top: 42%;
   transform: translate(-50%, -50%);
   font-size: min(72vw, 340px);
-  font-weight: 800;
-  line-height: 1;
-  color: var(--money-mark);
-  pointer-events: none;
-  z-index: 0;
-  letter-spacing: -0.06em;
   text-shadow: 0 8px 40px rgba(0,0,0,0.08);
-  user-select: none;
 }
-#app > *:not(.money-mark) { position: relative; z-index: 1; }
-
-.theme-money .top h1 {
+html.theme-mint .top h1 {
   color: #fff;
   text-shadow: 0 1px 2px rgba(0,0,0,0.12);
 }
-.theme-money .subtitle { color: rgba(255,255,255,0.82); }
-.theme-money .icon-btn { color: #fff; }
-.theme-money .icon-btn:active { background: rgba(255,255,255,0.18); }
-.theme-money .text-btn { color: #fff; }
-.theme-money .empty { color: rgba(255,255,255,0.85); }
-.theme-money .banner {
+html.theme-mint .subtitle { color: rgba(255,255,255,0.82); }
+html.theme-mint .icon-btn { color: #fff; }
+html.theme-mint .icon-btn:active { background: rgba(255,255,255,0.18); }
+html.theme-mint .text-btn { color: #fff; }
+html.theme-mint .empty { color: rgba(255,255,255,0.85); }
+html.theme-mint .banner {
   background: rgba(255,255,255,0.92);
   backdrop-filter: blur(8px);
 }
-.theme-money .banner.linked { background: rgba(232, 248, 237, 0.95); }
-.theme-money .fab {
+html.theme-mint .banner.linked { background: rgba(232, 248, 237, 0.95); }
+html.theme-mint .fab {
   background: #0B2E1A;
   box-shadow: 0 8px 28px rgba(0,0,0,0.28);
 }
-.theme-money .fab:active { background: #071F12; }
-.theme-money .bill-row {
-  border-color: rgba(255,255,255,0.55);
+html.theme-mint .fab:active { background: #071F12; }
+html.theme-mint .bill-row { border-color: rgba(255,255,255,0.55); }
+
+/* 2) Green header bar with dollar mark */
+html.theme-header .top {
+  margin: 0 -16px 10px;
+  padding: 14px 16px 16px;
+  background: linear-gradient(135deg, #22A055, #147A3F);
+  border-radius: 0 0 20px 20px;
+  position: relative;
+  overflow: hidden;
 }
+html.theme-header .money-mark {
+  display: block;
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 96px;
+  color: rgba(255,255,255,0.22);
+  z-index: 0;
+}
+html.theme-header .top > * { position: relative; z-index: 1; }
+html.theme-header .top h1 { color: #fff; }
+html.theme-header .subtitle { color: rgba(255,255,255,0.85); }
+html.theme-header .icon-btn { color: #fff; }
+html.theme-header .icon-btn:active { background: rgba(255,255,255,0.18); }
+html.theme-header .fab { background: var(--green); box-shadow: 0 8px 24px rgba(27,138,74,0.35); }
+html.theme-header .fab:active { background: var(--green-deep); }
+html.theme-header .bill-row { border-color: #1B8A4A; }
+
+/* 3) Green accents only on existing grey layout */
+html.theme-accents .money-mark {
+  display: block;
+  position: fixed;
+  right: -10px;
+  bottom: 120px;
+  font-size: 120px;
+  color: rgba(27, 138, 74, 0.1);
+  transform: none;
+}
+html.theme-accents .fab { background: var(--green); box-shadow: 0 8px 24px rgba(27,138,74,0.35); }
+html.theme-accents .fab:active { background: var(--green-deep); }
+html.theme-accents .bill-row { border-color: #1B8A4A; }
+html.theme-accents .icon-btn { color: var(--green); }
+html.theme-accents .banner.linked { background: #E8F8ED; }
+html.theme-accents .pill.ok { background: var(--green); }
+
 
 .top { padding: 12px 0 8px; }
 .top-row {

@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="en-AU">
 <head>
+  <script>
+    /* build v9 — theme from ?theme=mint|header|accents (default mint) */
+    (function () {
+      var q = new URLSearchParams(location.search).get("theme") || "mint";
+      if (q !== "mint" && q !== "header" && q !== "accents") q = "mint";
+      document.documentElement.className = "theme-" + q;
+      window.__BILLS_THEME__ = q;
+      window.__BILLS_BUILD__ = "v9";
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.content = q === "mint" ? "#1B8A4A" : "#F2F2F7";
+    })();
+  </script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#1B8A4A" />
@@ -13,11 +25,12 @@
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
   <title>Bills</title>
-  <link rel="stylesheet" href="styles.css?v=8" />
+  <link rel="stylesheet" href="styles.css?v=9" />
   <script>
-    /* build v8 — force FAB label; unregister SW only (no re-register) */
+    /* build v9 — force FAB; unregister SW; place $ for header theme */
     (function () {
-      var BUILD = "v8";
+      var BUILD = window.__BILLS_BUILD__ || "v9";
+      var theme = window.__BILLS_THEME__ || "mint";
       function forceFab() {
         var fab = document.getElementById("btn-add");
         if (fab) {
@@ -25,7 +38,14 @@
           fab.setAttribute("data-build", BUILD);
         }
         var sub = document.querySelector("#view-active .subtitle");
-        if (sub) sub.textContent = "Email · Bank feed · Manual · build " + BUILD;
+        if (sub) sub.textContent = "Email · Bank feed · Manual · " + theme + " · " + BUILD;
+        var mark = document.querySelector(".money-mark");
+        var app = document.getElementById("app");
+        var top = document.querySelector("#view-active .top");
+        if (mark && app && top) {
+          if (theme === "header") top.appendChild(mark);
+          else app.insertBefore(mark, app.firstChild);
+        }
       }
       if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", forceFab);
@@ -46,7 +66,7 @@
   </script>
 </head>
 <body>
-  <div id="app" class="theme-money">
+  <div id="app" class="">
     <div class="money-mark" aria-hidden="true">$</div>
     <!-- Active list -->
     <section id="view-active" class="view">
@@ -202,6 +222,6 @@
   <!-- Toast -->
   <div id="toast" class="toast hidden" role="status"></div>
 
-  <script src="app.js?v=8" defer></script>
+  <script src="app.js?v=9" defer></script>
 </body>
 </html>
