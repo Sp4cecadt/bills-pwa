@@ -144,7 +144,13 @@ button, input, select { font: inherit; }
   font-weight: 600;
   font-size: 15px;
   z-index: 0;
-  border-radius: 0;
+  border-radius: 13px;
+  /* Hidden until swipe — otherwise red peeks around the blue card border */
+  opacity: 0;
+  pointer-events: none;
+}
+.bill-row.swiping .swipe-bg {
+  opacity: 1;
 }
 .bill-row .row-front {
   position: relative;
@@ -154,6 +160,7 @@ button, input, select { font: inherit; }
   gap: 12px;
   width: 100%;
   background: var(--card);
+  border-radius: 13px;
   transition: transform 0.15s ease;
 }
 .bill-row.swiping .row-front { transition: none; }
