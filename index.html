@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#F2F2F7" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Bills" />
+  <meta name="description" content="Track bills, streaming subscriptions, and recurring bank expenses." />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+  <title>Bills</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Active list -->
+    <section id="view-active" class="view">
+      <header class="top">
+        <div class="top-row">
+          <h1>Bills</h1>
+          <div class="top-actions">
+            <button type="button" class="icon-btn" id="btn-archive" aria-label="Archive" title="Archive">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 7h18v2H3V7zm2 4h14v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9zm3 3h8"/></svg>
+            </button>
+            <button type="button" class="icon-btn" id="btn-settings" aria-label="Settings" title="Settings">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9c.3.6.9 1 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+            </button>
+          </div>
+        </div>
+        <p class="subtitle">Email · Bank feed · Manual</p>
+      </header>
+
+      <div id="bank-banner" class="banner" role="status">
+        <div class="banner-text">
+          <strong id="bank-banner-title">Connect bank via Basiq</strong>
+          <span id="bank-banner-sub">AU CDR read-only · e.g. Example Bank</span>
+        </div>
+        <button type="button" class="banner-btn" id="btn-bank-stub">Link</button>
+      </div>
+
+      <div id="bill-list" class="card-list" aria-live="polite"></div>
+
+      <p id="empty-active" class="empty hidden">No upcoming bills. Tap + to add one.</p>
+
+      <div class="fab-space"></div>
+      <button type="button" class="fab" id="btn-add">+ Add bill or sub</button>
+    </section>
+
+    <!-- Archive -->
+    <section id="view-archive" class="view hidden">
+      <header class="top">
+        <div class="top-row">
+          <button type="button" class="text-btn" id="btn-back-active">‹ Bills</button>
+          <h1>Archive</h1>
+          <span class="spacer"></span>
+        </div>
+        <p class="subtitle">Paid &amp; deleted — restore anytime</p>
+      </header>
+      <div id="archive-list" class="card-list"></div>
+      <p id="empty-archive" class="empty hidden">Archive is empty.</p>
+    </section>
+  </div>
+
+  <!-- Add / Edit sheet -->
+  <div id="sheet-add" class="sheet hidden" role="dialog" aria-modal="true" aria-labelledby="add-title">
+    <div class="sheet-backdrop" data-close="sheet-add"></div>
+    <div class="sheet-panel">
+      <div class="sheet-handle"></div>
+      <h2 id="add-title">Add bill or sub</h2>
+      <form id="form-add" autocomplete="off">
+        <label>Name
+          <input type="text" name="name" required placeholder="e.g. Netflix" maxlength="80" />
+        </label>
+        <label>Amount (AUD)
+          <input type="number" name="amount" required min="0.01" step="0.01" placeholder="0.00" inputmode="decimal" />
+        </label>
+        <label>Due date
+          <input type="date" name="dueDate" required />
+        </label>
+        <label>Source
+          <select name="source">
+            <option value="manual">Manual</option>
+            <option value="email">Email</option>
+            <option value="streaming">Streaming</option>
+            <option value="bank">Bank (recurring)</option>
+          </select>
+        </label>
+        <label>Note <span class="opt">(optional)</span>
+          <input type="text" name="note" maxlength="120" placeholder="Account / reference" />
+        </label>
+        <div class="sheet-actions">
+          <button type="button" class="btn-secondary" data-close="sheet-add">Cancel</button>
+          <button type="submit" class="btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bill detail sheet -->
+  <div id="sheet-detail" class="sheet hidden" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+    <div class="sheet-backdrop" data-close="sheet-detail"></div>
+    <div class="sheet-panel">
+      <div class="sheet-handle"></div>
+      <div class="detail-head">
+        <div id="detail-logo" class="logo lg"></div>
+        <div>
+          <h2 id="detail-title">—</h2>
+          <p id="detail-meta" class="muted"></p>
+        </div>
+      </div>
+      <p id="detail-amount" class="detail-amount"></p>
+      <p id="detail-note" class="muted hidden"></p>
+      <div class="sheet-actions col">
+        <button type="button" class="btn-primary" id="btn-mark-paid">Mark paid</button>
+        <button type="button" class="btn-danger" id="btn-delete">Delete</button>
+        <button type="button" class="btn-secondary" data-close="sheet-detail">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings sheet -->
+  <div id="sheet-settings" class="sheet hidden" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <div class="sheet-backdrop" data-close="sheet-settings"></div>
+    <div class="sheet-panel">
+      <div class="sheet-handle"></div>
+      <h2 id="settings-title">Settings</h2>
+
+      <div class="settings-block">
+        <h3>Email sync <span class="stub-badge">Stub · v2</span></h3>
+        <p class="muted">OAuth for <strong>your-email@example.com</strong>, scoped to billing &amp; subscription senders.</p>
+        <button type="button" class="btn-secondary full" id="btn-email-stub">Connect email (coming soon)</button>
+      </div>
+
+      <div class="settings-block">
+        <h3>Bank feed <span class="stub-badge">Stub · v3</span></h3>
+        <p class="muted">Read-only AU CDR via Basiq (e.g. Example Bank). Detects likely recurring expenses.</p>
+        <label class="toggle-row">
+          <span>Pretend Example Bank linked (demo)</span>
+          <input type="checkbox" id="toggle-bank-demo" />
+        </label>
+        <button type="button" class="btn-secondary full" id="btn-basiq-stub">Connect bank via Basiq (coming soon)</button>
+      </div>
+
+      <div class="settings-block">
+        <h3>Reminders <span class="stub-badge">Stub · v4</span></h3>
+        <p class="muted">Push notification and email, 3 days before due. Delivery not wired yet.</p>
+        <label class="toggle-row">
+          <span>Reminders on</span>
+          <input type="checkbox" id="toggle-reminders" checked />
+        </label>
+        <label>Days before due
+          <input type="number" id="reminder-days" min="1" max="14" value="3" />
+        </label>
+        <button type="button" class="btn-secondary full" id="btn-push-stub">Enable push &amp; email (coming soon)</button>
+      </div>
+
+      <div class="settings-block">
+        <h3>Data</h3>
+        <button type="button" class="btn-secondary full" id="btn-reset-seed">Reset to demo seed</button>
+        <button type="button" class="btn-danger full" id="btn-clear-all">Clear all local data</button>
+      </div>
+
+      <button type="button" class="btn-secondary full" data-close="sheet-settings">Done</button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden" role="status"></div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
