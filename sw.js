@@ -1,5 +1,5 @@
-/* Bills PWA — offline shell (v4) */
-const CACHE = "bills-pwa-v4";
+/* Bills PWA — offline shell (v5) */
+const CACHE = "bills-pwa-v5";
 const SHELL = [
   "./",
   "./index.html",

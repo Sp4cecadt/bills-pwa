@@ -514,12 +514,12 @@
             regs.map((r) => {
               const script = r.active && r.active.scriptURL;
               // Drop any worker that is not our v4 URL so iOS cannot keep an old shell
-              if (script && !script.includes("sw.js?v=4")) return r.unregister();
+              if (script && !script.includes("sw.js?v=5")) return r.unregister();
               return Promise.resolve();
             })
           )
         )
-        .then(() => navigator.serviceWorker.register("./sw.js?v=4"))
+        .then(() => navigator.serviceWorker.register("./sw.js?v=5"))
         .then((reg) => reg.update())
         .catch(() => {});
     });

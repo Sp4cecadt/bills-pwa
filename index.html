@@ -13,7 +13,37 @@
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
   <title>Bills</title>
-  <link rel="stylesheet" href="styles.css?v=4" />
+  <link rel="stylesheet" href="styles.css?v=5" />
+  <script>
+    /* build v5 — runs before app.js; clears stuck iOS SW shells when this HTML finally loads */
+    (function () {
+      var BUILD = "v5";
+      function forceFab() {
+        var fab = document.getElementById("btn-add");
+        if (fab) {
+          fab.textContent = "+ ADD BILL OR SUBSCRIPTION";
+          fab.setAttribute("data-build", BUILD);
+        }
+      }
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", forceFab);
+      } else {
+        forceFab();
+      }
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function (regs) {
+          return Promise.all(regs.map(function (r) { return r.unregister(); }));
+        }).then(function () {
+          if (!window.caches) return;
+          return caches.keys().then(function (keys) {
+            return Promise.all(keys.map(function (k) { return caches.delete(k); }));
+          });
+        }).then(function () {
+          return navigator.serviceWorker.register("./sw.js?v=5");
+        }).catch(function () {});
+      }
+    })();
+  </script>
 </head>
 <body>
   <div id="app">
@@ -171,6 +201,6 @@
   <!-- Toast -->
   <div id="toast" class="toast hidden" role="status"></div>
 
-  <script src="app.js?v=4" defer></script>
+  <script src="app.js?v=5" defer></script>
 </body>
 </html>
