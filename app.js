@@ -506,6 +506,28 @@
     });
   }
 
+
+  function fabScrollHide() {
+    const fab = $("#btn-add");
+    if (!fab) return;
+    let timer = null;
+    let lastY = window.scrollY || 0;
+    const hide = () => fab.classList.add("fab-away");
+    const show = () => fab.classList.remove("fab-away");
+    const onScroll = () => {
+      const y = window.scrollY || 0;
+      if (Math.abs(y - lastY) < 2) return;
+      lastY = y;
+      hide();
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(show, 280);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    // Also catch scroll inside #app if the page itself doesn't scroll
+    const appEl = $("#app");
+    if (appEl) appEl.addEventListener("scroll", onScroll, { passive: true });
+  }
+
   function registerSW() {
     // Disabled: iOS Home Screen / Safari kept serving a stale offline shell and ignored label updates.
     // Still unregister any existing workers so old caches die.
@@ -524,6 +546,7 @@
     wire();
     updateBankBanner();
     renderActive();
+    fabScrollHide();
     registerSW();
   });
 })();
