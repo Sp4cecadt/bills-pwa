@@ -395,6 +395,8 @@
   }
 
   function wire() {
+    const fab = $("#btn-add");
+    if (fab) fab.textContent = "+ ADD BILL OR SUBSCRIPTION"; // Force FAB label
     document.body.addEventListener("click", (e) => {
       const close = e.target.closest("[data-close]");
       if (close) closeSheet(close.getAttribute("data-close"));
@@ -505,7 +507,21 @@
   function registerSW() {
     if (!("serviceWorker" in navigator)) return;
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./sw.js").catch(() => {});
+      navigator.serviceWorker
+        .getRegistrations()
+        .then((regs) =>
+          Promise.all(
+            regs.map((r) => {
+              const script = r.active && r.active.scriptURL;
+              // Drop any worker that is not our v4 URL so iOS cannot keep an old shell
+              if (script && !script.includes("sw.js?v=4")) return r.unregister();
+              return Promise.resolve();
+            })
+          )
+        )
+        .then(() => navigator.serviceWorker.register("./sw.js?v=4"))
+        .then((reg) => reg.update())
+        .catch(() => {});
     });
   }
 
