@@ -505,23 +505,16 @@
   }
 
   function registerSW() {
+    // Disabled: iOS Home Screen / Safari kept serving a stale offline shell and ignored label updates.
+    // Still unregister any existing workers so old caches die.
     if (!("serviceWorker" in navigator)) return;
     window.addEventListener("load", () => {
-      navigator.serviceWorker
-        .getRegistrations()
-        .then((regs) =>
-          Promise.all(
-            regs.map((r) => {
-              const script = r.active && r.active.scriptURL;
-              // Drop any worker that is not our v4 URL so iOS cannot keep an old shell
-              if (script && !script.includes("sw.js?v=5")) return r.unregister();
-              return Promise.resolve();
-            })
-          )
-        )
-        .then(() => navigator.serviceWorker.register("./sw.js?v=5"))
-        .then((reg) => reg.update())
-        .catch(() => {});
+      navigator.serviceWorker.getRegistrations().then((regs) =>
+        Promise.all(regs.map((r) => r.unregister()))
+      ).then(() => {
+        if (!window.caches) return;
+        return caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k))));
+      }).catch(() => {});
     });
   }
 
