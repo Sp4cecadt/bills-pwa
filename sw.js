@@ -1,5 +1,5 @@
-/* Bills PWA — offline shell (v1) */
-const CACHE = "bills-pwa-v2";
+/* Bills PWA — offline shell (v3) */
+const CACHE = "bills-pwa-v3";
 const SHELL = [
   "./",
   "./index.html",
@@ -30,17 +30,14 @@ self.addEventListener("fetch", (event) => {
   const req = event.request;
   if (req.method !== "GET") return;
   event.respondWith(
-    caches.match(req).then((cached) => {
-      const fetched = fetch(req)
-        .then((res) => {
-          if (res && res.ok && new URL(req.url).origin === self.location.origin) {
-            const clone = res.clone();
-            caches.open(CACHE).then((c) => c.put(req, clone));
-          }
-          return res;
-        })
-        .catch(() => cached);
-      return cached || fetched;
-    })
+    fetch(req)
+      .then((res) => {
+        if (res && res.ok && new URL(req.url).origin === self.location.origin) {
+          const clone = res.clone();
+          caches.open(CACHE).then((c) => c.put(req, clone));
+        }
+        return res;
+      })
+      .catch(() => caches.match(req))
   );
 });
