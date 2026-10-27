@@ -1,19 +1,22 @@
 :root {
-  --bg: #F2F2F7;
+  /* Money-green preview (build v8) */
+  --bg: #1B8A4A;
+  --bg-deep: #147A3F;
   --card: #FFFFFF;
-  --text: #1C1C1E;
-  --muted: #8E8E93;
-  --blue: #0A84FF;
-  --blue-press: #0071E3;
+  --text: #0B2E1A;
+  --muted: rgba(11, 46, 26, 0.62);
+  --blue: #0F6E3A; /* primary actions use money green */
+  --blue-press: #0A5A2F;
   --green: #34C759;
   --amber: #FF9F0A;
   --red: #FF3B30;
   --gray-pill: #8E8E93;
-  --sep: rgba(60, 60, 67, 0.12);
-  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  --sep: rgba(11, 46, 26, 0.14);
+  --shadow: 0 2px 8px rgba(0,0,0,0.12), 0 8px 24px rgba(0,0,0,0.08);
   --radius: 16px;
   --safe-b: env(safe-area-inset-bottom, 0px);
   --safe-t: env(safe-area-inset-top, 0px);
+  --money-mark: rgba(255, 255, 255, 0.14);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
@@ -21,7 +24,8 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: var(--bg);
+  background: linear-gradient(165deg, #22A055 0%, var(--bg) 42%, var(--bg-deep) 100%);
+  background-attachment: fixed;
   color: var(--text);
   -webkit-tap-highlight-color: transparent;
   -webkit-text-size-adjust: 100%;
@@ -40,6 +44,48 @@ button, input, select { font: inherit; }
   min-height: 100dvh;
   position: relative;
   padding: 0 16px 24px;
+  overflow-x: hidden;
+}
+
+/* Big dollar watermark — money theme */
+.money-mark {
+  position: fixed;
+  left: 50%;
+  top: 42%;
+  transform: translate(-50%, -50%);
+  font-size: min(72vw, 340px);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--money-mark);
+  pointer-events: none;
+  z-index: 0;
+  letter-spacing: -0.06em;
+  text-shadow: 0 8px 40px rgba(0,0,0,0.08);
+  user-select: none;
+}
+#app > *:not(.money-mark) { position: relative; z-index: 1; }
+
+.theme-money .top h1 {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.12);
+}
+.theme-money .subtitle { color: rgba(255,255,255,0.82); }
+.theme-money .icon-btn { color: #fff; }
+.theme-money .icon-btn:active { background: rgba(255,255,255,0.18); }
+.theme-money .text-btn { color: #fff; }
+.theme-money .empty { color: rgba(255,255,255,0.85); }
+.theme-money .banner {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(8px);
+}
+.theme-money .banner.linked { background: rgba(232, 248, 237, 0.95); }
+.theme-money .fab {
+  background: #0B2E1A;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.28);
+}
+.theme-money .fab:active { background: #071F12; }
+.theme-money .bill-row {
+  border-color: rgba(255,255,255,0.55);
 }
 
 .top { padding: 12px 0 8px; }
