@@ -268,7 +268,7 @@
         dx = 0;
         tracking = true;
         horizontal = null;
-        row.classList.add("swiping");
+        // Do NOT add .swiping here — that made the red Delete layer flash on every tap/scroll.
       }, { passive: true });
 
       row.addEventListener("touchmove", (e) => {
@@ -285,6 +285,8 @@
             row.classList.remove("swiping");
             return;
           }
+          // Only reveal red Delete layer once this gesture is a horizontal swipe
+          row.classList.add("swiping");
         }
         if (!horizontal) return;
         dx = Math.min(0, mx);
