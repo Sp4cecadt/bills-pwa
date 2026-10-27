@@ -106,10 +106,13 @@ button, input, select { font: inherit; }
 
 /* List */
 .card-list {
-  background: var(--card);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  overflow: hidden;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 .bill-row {
   display: flex;
@@ -121,10 +124,13 @@ button, input, select { font: inherit; }
   touch-action: pan-y;
   user-select: none;
   transition: transform 0.15s ease;
-  border-bottom: 1px solid var(--sep);
+  border: 1px solid var(--blue);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
   cursor: pointer;
 }
-.bill-row:last-child { border-bottom: none; }
+.bill-row:last-child { border: 1px solid var(--blue); }
 .bill-row:active { background: #F9F9FB; }
 .bill-row .swipe-bg {
   position: absolute;
