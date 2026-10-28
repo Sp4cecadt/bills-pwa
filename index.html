@@ -8,16 +8,16 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Bills" />
   <meta name="description" content="Track bills, streaming subscriptions, and recurring bank expenses." />
-  <link rel="manifest" href="manifest.webmanifest?v=12" />
-  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=12" />
-  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=12" />
-  <link rel="icon" type="image/svg+xml" href="icons/icon.svg?v=12" />
+  <link rel="manifest" href="manifest.webmanifest?v=13" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=13" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=13" />
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg?v=13" />
   <title>Bills</title>
-  <link rel="stylesheet" href="styles.css?v=12" />
+  <link rel="stylesheet" href="styles.css?v=13" />
   <script>
-    /* build v12 — white UI restored; force FAB; unregister SW */
+    /* build v13 — payment frequency on add form; unregister SW */
     (function () {
-      var BUILD = "v12";
+      var BUILD = "v13";
       function forceFab() {
         var fab = document.getElementById("btn-add");
         if (fab) {
@@ -111,6 +111,15 @@
         <label>Due date
           <input type="date" name="dueDate" required />
         </label>
+        <label>Payment frequency
+          <select name="frequency">
+            <option value="weekly">Weekly</option>
+            <option value="fortnightly">Fortnightly</option>
+            <option value="monthly" selected>Monthly</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+        </label>
         <label>Source
           <select name="source">
             <option value="manual">Manual</option>
@@ -143,6 +152,7 @@
         </div>
       </div>
       <p id="detail-amount" class="detail-amount"></p>
+      <p id="detail-frequency" class="detail-frequency muted"></p>
       <p id="detail-note" class="muted hidden"></p>
       <div class="sheet-actions col">
         <button type="button" class="btn-primary" id="btn-mark-paid">Mark paid</button>
@@ -201,6 +211,6 @@
   <!-- Toast -->
   <div id="toast" class="toast hidden" role="status"></div>
 
-  <script src="app.js?v=12" defer></script>
+  <script src="app.js?v=13" defer></script>
 </body>
 </html>

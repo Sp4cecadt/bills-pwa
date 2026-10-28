@@ -32,14 +32,14 @@
 
   function seedBills() {
     return [
-      { id: uid(), name: "Netflix", amount: 22.99, dueDate: daysFromNow(2), source: "streaming", note: "Standard plan", likelyRecurring: false },
-      { id: uid(), name: "Origin Electricity", amount: 120.00, dueDate: daysFromNow(4), source: "email", note: "Quarterly estimate", likelyRecurring: false },
-      { id: uid(), name: "Coles groceries", amount: 95.00, dueDate: daysFromNow(6), source: "bank", note: "Weekly cycle · Example Bank", likelyRecurring: true },
-      { id: uid(), name: "Spotify", amount: 12.99, dueDate: daysFromNow(9), source: "streaming", note: "Individual", likelyRecurring: false },
-      { id: uid(), name: "Alinta Gas", amount: 75.00, dueDate: daysFromNow(12), source: "email", note: "", likelyRecurring: false },
-      { id: uid(), name: "Revo Gym", amount: 50.00, dueDate: daysFromNow(15), source: "bank", note: "Monthly membership · Example Bank", likelyRecurring: true },
-      { id: uid(), name: "Disney+", amount: 13.99, dueDate: daysFromNow(18), source: "streaming", note: "Monthly", likelyRecurring: false },
-      { id: uid(), name: "CGU Contents", amount: 45.00, dueDate: daysFromNow(24), source: "email", note: "Monthly premium", likelyRecurring: false },
+      { id: uid(), name: "Netflix", amount: 22.99, dueDate: daysFromNow(2), source: "streaming", frequency: "monthly", note: "Standard plan", likelyRecurring: false },
+      { id: uid(), name: "Origin Electricity", amount: 120.00, dueDate: daysFromNow(4), source: "email", frequency: "quarterly", note: "Quarterly estimate", likelyRecurring: false },
+      { id: uid(), name: "Coles groceries", amount: 95.00, dueDate: daysFromNow(6), source: "bank", frequency: "weekly", note: "Weekly cycle · Example Bank", likelyRecurring: true },
+      { id: uid(), name: "Spotify", amount: 12.99, dueDate: daysFromNow(9), source: "streaming", frequency: "monthly", note: "Individual", likelyRecurring: false },
+      { id: uid(), name: "Alinta Gas", amount: 75.00, dueDate: daysFromNow(12), source: "email", frequency: "quarterly", note: "", likelyRecurring: false },
+      { id: uid(), name: "Revo Gym", amount: 50.00, dueDate: daysFromNow(15), source: "bank", frequency: "monthly", note: "Monthly membership · Example Bank", likelyRecurring: true },
+      { id: uid(), name: "Disney+", amount: 13.99, dueDate: daysFromNow(18), source: "streaming", frequency: "monthly", note: "Monthly", likelyRecurring: false },
+      { id: uid(), name: "CGU Contents", amount: 45.00, dueDate: daysFromNow(24), source: "email", frequency: "monthly", note: "Monthly premium", likelyRecurring: false },
     ];
   }
 
@@ -142,6 +142,16 @@
     return { email: "Email", streaming: "Streaming", bank: "Bank", manual: "Manual" }[src] || src;
   }
 
+  function frequencyLabel(freq) {
+    return {
+      weekly: "Weekly",
+      fortnightly: "Fortnightly",
+      monthly: "Monthly",
+      quarterly: "Quarterly",
+      yearly: "Yearly",
+    }[freq] || null;
+  }
+
   function escapeHtml(s) {
     return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
@@ -199,6 +209,7 @@
     const days = daysUntil(b.dueDate);
     $("#detail-meta").textContent = `${sourceLabel(b.source)}${b.likelyRecurring ? " · likely recurring" : ""} · due ${b.dueDate} · ${pillLabel(days)}`;
     $("#detail-amount").textContent = formatAUD(b.amount);
+    $("#detail-frequency").textContent = frequencyLabel(b.frequency) || "—";
     const note = $("#detail-note");
     if (b.note) {
       note.textContent = b.note;
@@ -322,8 +333,10 @@
     empty.classList.add("hidden");
     list.innerHTML = bills.map((b) => {
       const days = daysUntil(b.dueDate);
+      const freqLbl = frequencyLabel(b.frequency);
       const tags = [
         `<span class="tag ${b.source}">${sourceLabel(b.source)}</span>`,
+        freqLbl ? `<span class="tag freq">${freqLbl}</span>` : "",
         b.likelyRecurring ? `<span class="tag likely">Likely recurring</span>` : "",
       ].join("");
       return `
@@ -410,6 +423,7 @@
       const form = $("#form-add");
       form.reset();
       form.dueDate.value = daysFromNow(7);
+      form.frequency.value = "monthly";
       form.source.value = "manual";
       openSheet("sheet-add");
       setTimeout(() => form.name.focus(), 50);
@@ -423,6 +437,7 @@
         name: String(fd.get("name") || "").trim(),
         amount: Number(fd.get("amount")),
         dueDate: String(fd.get("dueDate")),
+        frequency: String(fd.get("frequency") || "monthly"),
         source: String(fd.get("source") || "manual"),
         note: String(fd.get("note") || "").trim(),
         likelyRecurring: String(fd.get("source")) === "bank",

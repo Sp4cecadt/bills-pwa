@@ -208,6 +208,7 @@ button, input, select { font: inherit; }
 .tag.email { color: #0A84FF; background: #E8F1FF; }
 .tag.manual { color: #8E8E93; background: #F2F2F7; }
 .tag.likely { color: #C93400; background: #FFEFE5; }
+.tag.freq { color: #636366; background: #EFEFF4; }
 
 .row-right {
   display: flex;
@@ -408,8 +409,12 @@ button, input, select { font: inherit; }
 .detail-amount {
   font-size: 32px;
   font-weight: 700;
-  margin: 12px 0;
+  margin: 12px 0 4px;
   font-variant-numeric: tabular-nums;
+}
+.detail-frequency {
+  margin: 0 0 12px;
+  font-size: 15px;
 }
 
 .settings-block {
